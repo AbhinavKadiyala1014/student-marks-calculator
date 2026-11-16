@@ -25,7 +25,7 @@ The internal marks are calculated using:
 
 For both class tests and sessionals:
 - Higher mark receives 2/3 weightage.
-- Lower mark receives 1/3 weightage.
+- Lower mark receives 1/3 weightage..
 
 **Formula:**
 
