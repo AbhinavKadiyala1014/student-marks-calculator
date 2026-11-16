@@ -1,0 +1,980 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Student marks calculator for internal marks, external marks and grade prediction.">
+<meta name="theme-color" content="#4338ca">
+<title>Student Marks Calculator</title>
+
+<style>
+:root {
+    --primary: #4338ca;
+    --dark: #312e81;
+    --background: #f5f6fa;
+    --text: #171923;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --success: #15803d;
+    --danger: #dc2626;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.container {
+    width: 94%;
+    max-width: 1080px;
+    margin: 35px auto;
+}
+
+/* HEADER */
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: clamp(25px, 4vw, 36px);
+    color: var(--dark);
+    font-weight: 800;
+}
+
+.header p {
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+/* GRADE WARNING */
+
+.grade-warning {
+    background: #fff1f0;
+    border: 2px solid #dc2626;
+    border-left: 8px solid #dc2626;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.warning-icon {
+    font-size: 32px;
+}
+
+.grade-warning h2 {
+    color: #b91c1c;
+    font-size: clamp(18px, 3vw, 23px);
+    font-weight: 900;
+    margin: 8px 0;
+}
+
+.grade-warning p {
+    color: #7f1d1d;
+    font-size: 15px;
+}
+
+.grade-warning strong {
+    color: #b91c1c;
+    font-weight: 900;
+}
+
+.warning-example {
+    background: #fee2e2;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+/* CARDS */
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.035);
+}
+
+.card h2 {
+    font-size: 21px;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 22px;
+}
+
+/* INPUTS */
+
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    min-height: 46px;
+    padding: 13px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 16px;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,.1);
+}
+
+.input-group small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* BUTTONS */
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+.calculate-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.calculate-btn:hover {
+    background: var(--dark);
+}
+
+.reset-btn {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+/* INTERNAL RESULT */
+
+.internal-result {
+    display: none;
+    background: #eef2ff;
+    padding: 22px;
+    border-radius: 12px;
+    margin-top: 22px;
+}
+
+.internal-result h3 {
+    color: var(--dark);
+}
+
+.big-number {
+    font-size: clamp(30px, 6vw, 38px);
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.progress-bar {
+    background: #dbeafe;
+    height: 12px;
+    border-radius: 20px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    transition: width .3s;
+}
+
+/* CONVERSION INFORMATION */
+
+.conversion-info {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    font-size: 14px;
+    color: #075985;
+}
+
+/* GRADE TABLE */
+
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    min-width: 580px;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 14px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    background: #eef2ff;
+    color: var(--dark);
+    font-size: 13px;
+}
+
+td {
+    font-size: 14px;
+}
+
+.grade {
+    display: inline-block;
+    padding: 5px 13px;
+    border-radius: 7px;
+    font-weight: 800;
+}
+
+.ex { background: #dcfce7; color: #166534; }
+.aplus { background: #dbeafe; color: #1d4ed8; }
+.a { background: #ede9fe; color: #6d28d9; }
+.bplus { background: #fef3c7; color: #92400e; }
+.b { background: #ffedd5; color: #9a3412; }
+.c { background: #e0f2fe; color: #075985; }
+.f { background: #fee2e2; color: #b91c1c; }
+
+.achieved {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.impossible {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* FINAL RESULT */
+
+.final-result {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+}
+
+.final-result h3 {
+    color: #166534;
+}
+
+.final-result .big-number {
+    color: #15803d;
+}
+
+.final-result p {
+    margin-top: 7px;
+}
+
+/* ERRORS */
+
+.error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+}
+
+/* FOOTER */
+
+.footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px 10px;
+    font-size: 13px;
+}
+
+/* TABLET */
+
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        margin: 22px auto;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    .container {
+        width: 94%;
+        margin: 16px auto;
+    }
+
+    .input-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .card {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .grade-warning {
+        padding: 15px;
+    }
+
+    .grade-warning p {
+        font-size: 13px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .button-group button {
+        width: 100%;
+        min-height: 46px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- MAIN HEADER -->
+
+    <header class="header">
+        <h1>Student Marks Calculator</h1>
+        <p>Calculate your internal marks and required external marks.</p>
+    </header>
+
+    <!-- GRADE WARNING -->
+
+    <section class="grade-warning">
+
+        <div class="warning-icon">⚠️</div>
+
+        <h2>IMPORTANT: GRADE BOUNDARY WARNING</h2>
+
+        <p>
+            These are the minimum marks required to achieve each grade.
+            Scoring even <strong>1 MARK LESS</strong> than the specified
+            boundary will reduce your grade to the next lower grade.
+        </p>
+
+        <div class="warning-example">
+            Example: If A+ requires 80 marks, scoring 79 marks
+            will result in an A grade.
+        </div>
+
+    </section>
+
+    <!-- INTERNAL MARKS -->
+
+    <section class="card">
+
+        <h2>01. Internal Marks Calculator</h2>
+
+        <p class="subtitle">
+            Enter your CT, Sessional and Home Assignment marks.
+        </p>
+
+        <div class="input-grid">
+
+            <div class="input-group">
+                <label for="ct1">CT1 Marks</label>
+                <input type="number" id="ct1"
+                min="0" max="10" step="any" placeholder="Out of 10">
+                <small>Maximum: 10 marks</small>
+            </div>
+
+            <div class="input-group">
+                <label for="ct2">CT2 Marks</label>
+                <input type="number" id="ct2"
+                min="0" max="10" step="any" placeholder="Out of 10">
+                <small>Maximum: 10 marks</small>
+            </div>
+
+            <div class="input-group">
+                <label for="st1">ST1 Marks</label>
+                <input type="number" id="st1"
+                min="0" max="20" step="any" placeholder="Out of 20">
+                <small>Maximum: 20 marks</small>
+            </div>
+
+            <div class="input-group">
+                <label for="st2">ST2 Marks</label>
+                <input type="number" id="st2"
+                min="0" max="20" step="any" placeholder="Out of 20">
+                <small>Maximum: 20 marks</small>
+            </div>
+
+            <div class="input-group">
+                <label for="ha">Home Assignment (HA)</label>
+                <input type="number" id="ha"
+                min="0" max="10" step="any" placeholder="Out of 10">
+                <small>Maximum: 10 marks</small>
+            </div>
+
+        </div>
+
+        <div class="button-group">
+
+            <button class="calculate-btn" onclick="calculateInternal()">
+                Calculate Internal Marks
+            </button>
+
+            <button class="reset-btn" onclick="resetCalculator()">
+                Reset
+            </button>
+
+        </div>
+
+        <p class="error" id="inputError">
+            Please enter valid marks within the specified maximum limits.
+            All fields are required.
+        </p>
+
+        <div class="internal-result" id="internalResult">
+
+            <h3>Your Internal Marks</h3>
+
+            <div class="big-number">
+                <span id="internalMarks">0</span> / 40
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <p style="margin-top:12px;font-size:14px;">
+                CT Contribution: <b id="ctContribution">0</b> / 10
+                <br>
+                ST Contribution: <b id="stContribution">0</b> / 20
+                <br>
+                HA Contribution: <b id="haContribution">0</b> / 10
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- EXTERNAL MARKS -->
+
+    <section class="card" id="externalSection" hidden>
+
+        <h2>02. Required External Marks</h2>
+
+        <p class="subtitle">
+            Find the external examination marks required for each grade.
+        </p>
+
+        <p>
+            Your Internal Marks:
+            <strong id="displayInternal">0 / 40</strong>
+        </p>
+
+        <div class="conversion-info">
+            <strong>External conversion:</strong>
+            Enter your external examination marks out of 100.
+            The website automatically converts them to 60 marks.
+
+            <br><br>
+
+            Formula: External Marks × 0.6
+        </div>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Grade</th>
+                        <th>Required Total /100</th>
+                        <th>External Required /100</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="gradeTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+    <!-- EXPECTED EXTERNAL MARKS -->
+
+    <section class="card" id="predictionSection" hidden>
+
+        <h2>03. Expected External Marks</h2>
+
+        <p class="subtitle">
+            Enter your expected external examination marks out of 100.
+        </p>
+
+        <div class="input-group" style="max-width:400px">
+
+            <label for="externalMarks">
+                Expected External Marks /100
+            </label>
+
+            <input
+                type="number"
+                id="externalMarks"
+                min="0"
+                max="100"
+                step="any"
+                placeholder="Enter marks out of 100"
+            >
+
+            <small>Maximum: 100 marks</small>
+
+        </div>
+
+        <p class="error" id="externalError">
+            Please enter marks between 0 and 100.
+        </p>
+
+        <div class="final-result" id="finalResult">
+
+            <h3>Your Final Result</h3>
+
+            <div class="big-number">
+                <span id="finalTotal">0</span> / 100
+            </div>
+
+            <p>
+                External examination:
+                <strong id="externalRaw">0 / 100</strong>
+            </p>
+
+            <p>
+                Converted external marks:
+                <strong id="convertedExternal">0 / 60</strong>
+            </p>
+
+            <p>
+                Grade:
+                <strong id="finalGrade"></strong>
+            </p>
+
+            <p id="resultMessage"></p>
+
+        </div>
+
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+        <p>Student Marks Calculator</p>
+        <p>Calculate Smart. Prepare Better. Achieve Your Goals.</p>
+        <p>Independent student utility – not an official university result portal.</p>
+    </footer>
+
+</div>
+
+<script>
+
+// =====================================
+// GRADE BOUNDARIES
+// EXAMPLE VALUES - VERIFY OFFICIAL RULES
+// =====================================
+
+const grades = [
+    { name: "EX", minimum: 90, css: "ex" },
+    { name: "A+", minimum: 80, css: "aplus" },
+    { name: "A", minimum: 70, css: "a" },
+    { name: "B+", minimum: 60, css: "bplus" },
+    { name: "B", minimum: 50, css: "b" },
+    { name: "C", minimum: 40, css: "c" },
+    { name: "F", minimum: 0, css: "f" }
+];
+
+let currentInternal = null;
+
+
+// GET ELEMENT
+
+const get = id => document.getElementById(id);
+
+
+// VALIDATE INPUT
+
+function getMarks(id, maximum) {
+
+    const value = get(id).value.trim();
+
+    if (
+        value === "" ||
+        !Number.isFinite(Number(value)) ||
+        Number(value) < 0 ||
+        Number(value) > maximum
+    ) {
+        return null;
+    }
+
+    return Number(value);
+}
+
+
+// WEIGHTED CALCULATION
+
+function calculateWeightedPair(first, second) {
+
+    const higher = Math.max(first, second);
+    const lower = Math.min(first, second);
+
+    return (higher * 2/3) + (lower * 1/3);
+}
+
+
+// INTERNAL CALCULATION
+
+function calculateInternal() {
+
+    const ct1 = getMarks("ct1", 10);
+    const ct2 = getMarks("ct2", 10);
+    const st1 = getMarks("st1", 20);
+    const st2 = getMarks("st2", 20);
+    const ha = getMarks("ha", 10);
+
+    if ([ct1, ct2, st1, st2, ha].some(v => v === null)) {
+
+        get("inputError").style.display = "block";
+        get("internalResult").style.display = "none";
+        get("externalSection").hidden = true;
+        get("predictionSection").hidden = true;
+
+        currentInternal = null;
+        return;
+    }
+
+    get("inputError").style.display = "none";
+
+    // CT CONTRIBUTION
+
+    const ctTotal = calculateWeightedPair(ct1, ct2);
+
+    // SESSIONAL CONTRIBUTION
+
+    const stTotal = calculateWeightedPair(st1, st2);
+
+    // TOTAL INTERNAL MARKS
+
+    currentInternal = ctTotal + stTotal + ha;
+
+    // DISPLAY RESULTS
+
+    get("internalMarks").textContent =
+        currentInternal.toFixed(2);
+
+    get("ctContribution").textContent =
+        ctTotal.toFixed(2);
+
+    get("stContribution").textContent =
+        stTotal.toFixed(2);
+
+    get("haContribution").textContent =
+        ha.toFixed(2);
+
+    get("progressFill").style.width =
+        (currentInternal / 40 * 100) + "%";
+
+    get("internalResult").style.display = "block";
+
+    get("displayInternal").textContent =
+        currentInternal.toFixed(2) + " / 40";
+
+    get("externalSection").hidden = false;
+    get("predictionSection").hidden = false;
+
+    // CLEAR OLD RESULTS
+
+    get("externalMarks").value = "";
+    get("finalResult").style.display = "none";
+    get("externalError").style.display = "none";
+
+    generateGradeTable();
+}
+
+
+// GENERATE EXTERNAL REQUIREMENT TABLE
+
+function generateGradeTable() {
+
+    const table = get("gradeTable");
+
+    table.innerHTML = "";
+
+    grades.forEach(grade => {
+
+        const required60 = grade.minimum - currentInternal;
+
+        // Convert requirement from 60 to 100.
+
+        const required100 = required60 / 0.6;
+
+        let externalText;
+        let statusText;
+        let statusClass;
+
+        if (grade.name === "F") {
+
+            externalText = "Below 40 total";
+            statusText = "Fail";
+            statusClass = "impossible";
+
+        } else if (required60 <= 0) {
+
+            externalText = "0 marks";
+            statusText = "Already achieved";
+            statusClass = "achieved";
+
+        } else if (required60 > 60) {
+
+            externalText = "Not achievable";
+            statusText = "Impossible";
+            statusClass = "impossible";
+
+        } else {
+
+            // Round UP to a whole external exam mark
+            // so that the minimum grade boundary is met.
+
+            externalText =
+                Math.ceil(required100 - 1e-10) + " marks";
+
+            statusText = "Achievable";
+            statusClass = "achieved";
+        }
+
+        const row = document.createElement("tr");
+
+        const gradeCell = document.createElement("td");
+
+        const badge = document.createElement("span");
+
+        badge.className = "grade " + grade.css;
+        badge.textContent = grade.name;
+
+        gradeCell.appendChild(badge);
+
+        const totalCell = document.createElement("td");
+
+        totalCell.textContent =
+            grade.name === "F" ? "Below 40" : grade.minimum;
+
+        const externalCell = document.createElement("td");
+
+        externalCell.textContent = externalText;
+
+        const statusCell = document.createElement("td");
+
+        statusCell.textContent = statusText;
+        statusCell.className = statusClass;
+
+        row.append(
+            gradeCell,
+            totalCell,
+            externalCell,
+            statusCell
+        );
+
+        table.appendChild(row);
+
+    });
+}
+
+
+// EXTERNAL GRADE PREDICTION
+
+function predictGrade() {
+
+    if (currentInternal === null) return;
+
+    const raw = get("externalMarks").value.trim();
+
+    if (raw === "") {
+
+        get("externalError").style.display = "none";
+        get("finalResult").style.display = "none";
+
+        return;
+    }
+
+    const external100 = Number(raw);
+
+    if (
+        !Number.isFinite(external100) ||
+        external100 < 0 ||
+        external100 > 100
+    ) {
+
+        get("externalError").style.display = "block";
+        get("finalResult").style.display = "none";
+
+        return;
+    }
+
+    get("externalError").style.display = "none";
+
+    // CONVERT EXTERNAL 100 TO 60
+
+    const external60 = external100 * 0.6;
+
+    // FINAL TOTAL
+
+    const total = currentInternal + external60;
+
+    // FIND GRADE
+
+    const achievedGrade = grades.find(grade => {
+
+        if (grade.name === "F") {
+            return total < 40;
+        }
+
+        return total >= grade.minimum;
+
+    });
+
+    // DISPLAY TOTAL
+
+    get("finalTotal").textContent =
+        total.toFixed(2);
+
+    get("externalRaw").textContent =
+        external100.toFixed(2) + " / 100";
+
+    get("convertedExternal").textContent =
+        external60.toFixed(2) + " / 60";
+
+    // DISPLAY GRADE
+
+    const gradeElement = get("finalGrade");
+
+    gradeElement.textContent = achievedGrade.name;
+
+    gradeElement.className =
+        "grade " + achievedGrade.css;
+
+    // RESULT MESSAGE
+
+    let message;
+
+    if (achievedGrade.name === "F") {
+
+        message = "You have not reached the example passing boundary.";
+
+    } else if (Math.abs(total - achievedGrade.minimum) < 1e-9) {
+
+        message = "You have reached the exact minimum boundary for this grade.";
+
+    } else {
+
+        message =
+            "Congratulations! You have achieved " +
+            achievedGrade.name + " grade.";
+
+    }
+
+    get("resultMessage").textContent = message;
+
+    get("finalResult").style.display = "block";
+}
+
+
+// RESET CALCULATOR
+
+function resetCalculator() {
+
+    [
+        "ct1",
+        "ct2",
+        "st1",
+        "st2",
+        "ha",
+        "externalMarks"
+    ].forEach(id => {
+        get(id).value = "";
+    });
+
+    currentInternal = null;
+
+    get("inputError").style.display = "none";
+    get("externalError").style.display = "none";
+    get("internalResult").style.display = "none";
+
+    get("externalSection").hidden = true;
+    get("predictionSection").hidden = true;
+
+    get("finalResult").style.display = "none";
+
+    get("progressFill").style.width = "0%";
+}
+
+
+// EVENT LISTENERS
+
+get("externalMarks").addEventListener("input", predictGrade);
+
+</script>
+
+</body>
+</html>
